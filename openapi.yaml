@@ -16,7 +16,7 @@ paths:
           description: All Tasks returned from the database
           content:
             application/json:
-              schema:
+              schema: bearerAuth
                 type: object
                 properties:
                   status:
@@ -43,7 +43,7 @@ paths:
           description: Task returned by id
           content:
             application/json:
-              schema:
+              schema: bearerAuth
                 type: object
                 properties:
                   status:
@@ -59,7 +59,7 @@ paths:
           description: User doesn't match student ID
           content:
             application/json:
-              schema:
+              schema: bearerAuth
                 type: object
                 properties:
                   status:
@@ -71,7 +71,7 @@ paths:
           description: Task doesn't exist
           content:
             application/json:
-              schema:
+              schema: bearerAuth
                 type: object
                 properties:
                   status:
@@ -86,7 +86,7 @@ paths:
           description: Deleted an existing task in the database
           content:
             application/json:
-              schema:
+              schema: bearerAuth
                 type: object
                 properties:
                   status:
@@ -99,7 +99,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  status:
+                  status: bearerAuth
                     type: object
                     example:  {
                                 "error": "Not Found"
@@ -112,7 +112,7 @@ paths:
           description: Creates a new report in the database
           content:
             application/json:
-              schema:
+              schema: bearerAuth
                 type: object
                 properties:
                   status:
@@ -129,7 +129,7 @@ paths:
           description: Report returned by id
           content:
             application/json:
-              schema:
+              schema: bearerAuth
                 type: object
                 properties:
                   status:
@@ -146,7 +146,7 @@ paths:
           description: Report doesn't exist
           content:
             application/json:
-              schema:
+              schema: bearerAuth
                 type: object
                 properties:
                   status:
@@ -179,6 +179,31 @@ components:
 
     Report:
       type: object
+      properties:
+        id:
+          type: string
+          example: "1"
+        student_id:
+          type: string
+          example: "1"
+        status:
+          type: string
+          example: "Good"
+        download_url:
+          type: string
+          example: "/downloads/example.json"
+        created_at:
+          type: string
+          example: "08:55:34 PM"
+        updated_at:
+          type: string
+          example: "08:55:34 PM"
+      required: [student_id, status, created_at, updated_at]
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearereFormat: JWT
       properties:
         id:
           type: string
