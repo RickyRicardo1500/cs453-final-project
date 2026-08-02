@@ -1,0 +1,201 @@
+openapi: 3.0.3
+info:
+  title: CS553 Final API
+  version: 1.0.0
+  description: This API describes the request and response body for the client and server.
+
+servers:
+  - url: http://localhost:3000
+
+paths:
+  /tasks: 
+    get:
+      summary: Retrieve list of Tasks
+      responses:
+        "200":
+          description: All Tasks returned from the database
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: array
+                    example:  [{
+                                "id": "1",
+                                "title": "Intro Computer Science",
+                                "course": "CS100"
+                                "student_id": "1",
+                                "completed": 0
+                              },
+                              {
+                                "id": "2",
+                                "title": "Intro Computer Science",
+                                "course": "CS100"
+                                "student_id": "2",
+                                "completed": 0
+                              }]
+  /tasks/{id}:
+    get:
+      summary: Retrieve task
+      responses:
+        "200":
+          description: Task returned by id
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: object
+                    example:  {
+                                "id": "1",
+                                "title": "Intro Computer Science",
+                                "course": "CS100"
+                                "student_id": "1",
+                                "completed": 0
+                              }
+        "403":
+          description: User doesn't match student ID
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: object
+                    example:  {
+                                "error": "Forbidden"
+                              }
+        "404":
+          description: Task doesn't exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: object
+                    example:  {
+                                "error": "Not Found"
+                              }
+    delete:
+      summary: Delete a task (Requires Instructor Role)
+      responses:
+        "204":
+          description: Deleted an existing task in the database
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example:  "deleted"
+        "404":
+          description: Task doesn't exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: object
+                    example:  {
+                                "error": "Not Found"
+                              }
+  /reports: 
+    post:
+      summary: New report
+      responses:
+        "202":
+          description: Creates a new report in the database
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: object
+                    example:  {
+                                "student_id": "2",
+                                "status": "pending"
+                              }
+/reports/{id}:
+    get:
+      summary: Retrieve report
+      responses:
+        "200":
+          description: Report returned by id
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: object
+                    example:  {
+                                "id": "1",
+                                "student_id": "2",
+                                "status": "pending",
+                                "download_url": "/downloads/example.json",
+                                "created_at": "08:55:34 PM",
+                                "updated_at": "08:55:34 PM"
+                              }
+        "404":
+          description: Report doesn't exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: object
+                    example:  {
+                                "error": "Not Found"
+                              }
+
+components:
+  schemas:
+    Task:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "1"
+        title:
+          type: string
+          example: "Client/Server Architectures"
+        course:
+          type: string
+          example: "CS553"
+        student_id:
+          type: string
+          example: "1"
+        completed:
+          type: integer
+          example: 0
+      required: [title, course, student_id, completed]
+
+    Report:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "1"
+        student_id:
+          type: string
+          example: "1"
+        status:
+          type: string
+          example: "Good"
+        download_url:
+          type: string
+          example: "/downloads/example.json"
+        created_at:
+          type: string
+          example: "08:55:34 PM"
+        updated_at:
+          type: string
+          example: "08:55:34 PM"
+      required: [student_id, status, created_at, updated_at]
