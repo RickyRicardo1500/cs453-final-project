@@ -2,23 +2,23 @@
 
 ## 1. Authentication vs. Authorization
 
-Authentication verifies the identity of a user, while authorization determines what an authenticated user is allowed to do. If a request does not contain valid authentication credentials, the API should return 401 Unauthorized because the client has not successfully authenticated. If the caller is authenticated but does not have permission to perform the requested operation, the API should return 403 Forbidden because the user is logged in but is not authorized to access that resource.
+Authentication verifies the identity of a user while authorization determines what an authenticated user is allowed to do. If a request does not contain valid authentication credentials, then the API should return 401 Unauthorized because the client has not successfully been authenticated. If the caller is authenticated, but does not have permission to perform the requested operation, then the API should return 403 Forbidden. This is because the user is logged in, but is not authorized to access that resource.
 
 ## 2. Passwords, Sessions, and Tokens
 
-Applications should never store passwords as plain text because anyone who gains access to the database would immediately know every user's password. Instead, the server should store a secure password hash created with a hashing algorithm such as bcrypt. In a session-based login, the server stores session information and the client sends a session identifier with each request. In a token-based login, the server issues a signed token, such as a JWT, that the client includes with each request. An advantage of session-based authentication is that sessions can be revoked easily on the server. An advantage of token-based authentication is that it is stateless and works well for APIs and distributed systems.
+Applications should never store passwords as plain text because anyone who gains access to the database would know every user's password. The server should instead store a secure password hash created with a hashing algorithm, such as bcrypt. In a session-based login, the server stores session information and the client sends a session identifier with each request. In a token-based login, the server issues a signed token that the client includes with each request. An advantage of session-based authentication is that sessions can be revoked easily on the server. An advantage of token-based authentication is that it is stateless and works well for APIs and distributed systems.
 
 ## 3. JSON Web Tokens
 
-A JSON Web Token (JWT) is used to securely transmit information about an authenticated user between a client and a server. A JWT consists of three parts: the header, the payload, and the signature. Signing a JWT ensures that its contents cannot be modified without detection, while encryption hides the contents from anyone who reads the token. A server must validate a JWT before trusting its claims by verifying the signature, expiration time, and other required fields. If JWTs have excessively long expiration times, a stolen token can be used by an attacker for an extended period before it expires.
+A JSON Web Token (JWT) is used to securely transmit information about an authenticated user between the client and the server. A JWT consists of the header, the payload, and the signature. Signing a JWT ensures that its contents cannot be modified without detection, while encryption hides the contents from anyone who reads the token. A server must validate a JWT before trusting its claims by verifying the signature, expiration time, and other required fields. If JWTs have excessively long expiration times, a stolen token can be used by an attacker for an extended period before it expires.
 
 ## 4. OAuth
 
-OAuth allows users to grant limited access to their resources without sharing their passwords. The resource owner is the user who owns the data. The client application is the third-party application requesting access. The authorization server authenticates the user and issues access tokens. The resource server hosts the protected resources and validates access tokens before providing access. The access token is the credential that allows the client to access protected resources. Providing an OAuth access token is safer than sharing a password because the token can have limited permissions, can expire, and can be revoked without changing the user's password.
+OAuth allows users to grant limited access to their resources without sharing their passwords. The resource owner is the user who owns the data. The client application is the third party application requesting access. The authorization server authenticates the user and issues access tokens. The resource server hosts the protected resources and validates access tokens before providing access. The access token is the credential that allows the client to access protected resources. Providing an OAuth access token is safer than sharing a password because the token can have limited permissions, can expire, and can be revoked without changing the user's password.
 
 ## 5. PKI and Certificates
 
-A digital certificate helps a client establish a secure connection by verifying the identity of the server. The server's private key is kept secret and is used during the TLS handshake, while the public key is included in the certificate and is shared with clients. A certificate authority verifies the server's identity and signs the certificate so clients can trust it. The client verifies that the certificate was signed by a trusted certificate authority, matches the server's hostname, and has not expired. If certificate validation were skipped, attackers could perform man-in-the-middle attacks by presenting fake certificates and intercepting encrypted communications.
+A digital certificate helps a client establish a secure connection by verifying the identity of the server. The server's private key is kept secret and is used during the TLS handshake, while the public key is included in the certificate and is shared with clients. A certificate authority verifies the server's identity and signs the certificate so clients can trust it. The client verifies that the certificate was signed by a trusted certificate authority, matches the server's hostname, and has not expired. If certificate validation were skipped, attackers could perform attacks by presenting fake certificates and intercepting encrypted communications.
 
 ## 6. Databases, Messages, and Asynchronous Processing
 
@@ -39,7 +39,7 @@ Request                                                  | Decision and Status C
 
 Authentication ends after the API verifies the JWT signature, expiration, issuer, and other required claims, and then identifies the caller and their role. Authorization begins after that identity is trusted. The API then compares the authenticated user’s role and identity with the requested resource. For example, a student may access a task only when the task’s studentId matches the user identity in the JWT, while an instructor may access tasks belonging to any student.
 
-If the JWT is missing, malformed, expired, or invalid, the request fails during authentication with 401 Unauthorized. If the JWT is valid but the authenticated user is not permitted to access the requested task, the request fails during authorization with 403 Forbidden.
+If the JWT is missing, expired, or invalid, the request fails during authentication with 401 Unauthorized. If the JWT is valid but the authenticated user is not permitted to access the requested task, the request fails during authorization with 403 Forbidden.
 
 ## 2. Authentication and Authorization
 
@@ -47,7 +47,7 @@ If the JWT is missing, malformed, expired, or invalid, the request fails during 
 
 The university’s OAuth authorization server should issue the access token after the user successfully logs in. The token should be a signed JWT containing trusted claims such as the user’s identity, role, issuer, audience, and expiration time.The client should send the JWT to the Course Task Tracker API in the HTTP Authorization header. Before trusting the token, the API must verify its digital signature using the university authorization server’s public key. It should also validate the token’s expiration time, issuer, audience, and required claims. Only after these checks succeed should the API use the identity and role contained in the JWT.
 
-HTTPS protects the connection between the client and the API by encrypting the request and response in transit. During the TLS handshake, the API presents a digital certificate containing its public key. The client verifies that the certificate was issued by a trusted certificate authority, matches the API’s hostname, and has not expired. This helps prevent attackers from impersonating the API or intercepting the access token. The API must not trust a role supplied in the request body because the client controls that data and could submit "role": "instructor" to gain unauthorized access. The API should use only the role from the validated JWT or another trusted server-side data source.
+HTTPS protects the connection between the client and the API by encrypting the request and response in transit. During the TLS handshake, the API presents a digital certificate containing its public key. The client verifies that the certificate was issued by a trusted certificate authority, matches the API’s hostname, and has not expired. This helps prevent attackers from impersonating the API or intercepting the access token. The API must not trust a role supplied in the request body because the client controls that data and could submit "role": "instructor" to gain unauthorized access. The API should use only the role from the validated JWT or another trusted server side data source.
 
 ## 3. Database and Asynchronous Report Processing
 
@@ -56,7 +56,7 @@ A client should request a new progress report with POST /reports. The API should
 ```json
 {
   "id": "report-2",
-  "studentId": "abc001",
+  "studentId": "djs001",
   "status": "pending",
   "downloadUrl": null
 }
@@ -67,7 +67,7 @@ After creating the record, the API should place a message on the queue containin
 ```json
 {
   "reportId": "report-2",
-  "studentId": "abc001"
+  "studentId": "djs001"
 }
 ```
 
@@ -85,7 +85,7 @@ The client can check the current status with GET /reports/{id}. A successful sta
 ```json
 {
   "id": "report-2",
-  "studentId": "abc001",
+  "studentId": "djs001",
   "status": "completed",
   "downloadUrl": "https://api.example.edu/reports/report-2.pdf"
 }
@@ -146,5 +146,5 @@ The first practice I would recommend is designing the database before writing th
 
 The second practice is to use secure authentication and authorization. Passwords should always be hashed with a secure algorithm such as bcrypt, and JWTs should be validated on every protected request. Authorization checks should verify that users have permission to access or modify resources. These practices help prevent unauthorized access and protect sensitive data.
 
-The third practice is to use asynchronous processing for long-running operations. Instead of keeping an HTTP request open while a report is generated, the server should use a message queue and a background worker. This improves scalability, avoids request timeouts, and allows the client to check the job status while processing continues in the background.
+The third practice is to use asynchronous processing for long executing operations. Instead of keeping an HTTP request open while a report is generated, the server should use a message queue and a background worker. This improves scalability, avoids request timeouts, and allows the client to check the job status while processing continues in the background.
 
